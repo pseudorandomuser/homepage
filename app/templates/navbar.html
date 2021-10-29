@@ -1,0 +1,21 @@
+<div class="navbar" id="navbar">
+	<div id="navbar-left">
+		<a href="{% if home %}#{% else %}/{% endif %}">
+			<img id="main-logo" alt="logo" src="/static/img/logo.png">
+		</a>
+	</div>
+	<div id="navbar-center">
+		<strike><a{# href="/about" #} style="color:grey;">About</a></strike>
+		<strike><a{# href="/projects" #} style="color:grey;">Projects</a></strike>
+		<a href="/static/pdf/resume.pdf">Resume</a>
+		<a{# href="/contact" #} href="mailto:s8pijost@stud.uni-saarland.de">Contact</a>
+		{# <a href="/imprint">Imprint</a> #}
+	</div>
+	<div id="navbar-right">
+		<a href="https://github.com/pseudorandomuser"><img class="social-logo" alt="github" src="/static/img/social/github-orig.png"></a>
+		<a href="https://www.linkedin.com/in/pit-jost/"><img class="social-logo" alt="linkedin" src="/static/img/social/linkedin-square.png"></a>
+		<a href="https://twitter.com/jostpit"><img class="social-logo" alt="twitter" src="/static/img/social/twitter-free.png"></a>
+        <a href="https://soundcloud.com/pseudorandomuser"><img class="social-logo" alt="soundcloud" src="/static/img/social/soundcloud-circular.png"></a>
+		<a href="mailto:s8pijost@stud.uni-saarland.de"><img class="social-logo" alt="email" src="/static/img/social/email-free.png"></a>
+	</div>
+</div>

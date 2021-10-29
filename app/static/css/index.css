@@ -1,0 +1,26 @@
+section {
+	margin: 0;
+	overflow: auto;
+	background: black;
+}
+
+h1, h2, h3, a {
+	color: white;
+}
+
+.head-section {
+	background-image: url('/static/img/zoom-background-dark.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	height: 100%;
+}
+
+.head-section-content {
+	text-align: center;
+	margin: 100px 0 0;
+}
+
+.sub-section-content {
+	margin: 15px;
+}

@@ -1,0 +1,18 @@
+[uwsgi]
+
+module		= app:app
+plugin		= python3
+chdir		= 
+virtualenv  = 
+
+processes   = 
+socket		= 
+
+uid = 
+gid = 
+
+chown-socket    = 
+chmod-socket	= 664
+
+master  =	True
+vacuum	=	True
