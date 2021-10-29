@@ -22,7 +22,7 @@ jobs:
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Run Flake8
       run: |
-        flake8 ./app
+        flake8 ./app --show-source --statistics
     - name: Run Mypy
       run: |
         mypy --ignore-missing-import ./app
