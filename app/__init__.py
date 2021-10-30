@@ -2,7 +2,7 @@ import os
 import yaml
 import logging
 
-from typing import Any, Dict, Optional, Union
+from typing import Dict
 
 from flask import Flask
 
