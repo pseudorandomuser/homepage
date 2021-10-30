@@ -1,2 +1,10 @@
-flask
-flask_mongoengine
+# Flask application support
+flask>=2.0.2
+flask_mongoengine>=1.0.0
+
+# Application servers
+uwsgi>=2.0.20
+
+# Configuration parsing
+pyyaml>=6.0
+types-PyYAML>=6.0.0

@@ -8,6 +8,7 @@ on:
 
 env:
   APP_PATH: ./app
+  IGNORED_ERRORS: E128
 
 jobs:
   check:
@@ -15,7 +16,7 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-    - name: Setup Python@3.9
+    - name: Setup Python
       uses: actions/setup-python@v2
       with:
         python-version: 3.9
@@ -27,6 +28,6 @@ jobs:
     - name: Check with Pylint
       run: pylint -Ev ${APP_PATH}
     - name: Check with Flake8
-      run: flake8 --show-source --statistics ${APP_PATH}
+      run: flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${APP_PATH}
     - name: Check with Mypy
       run: mypy --ignore-missing-import ${APP_PATH}

@@ -1,0 +1,18 @@
+# Environment identifier
+environment: development
+
+# Possible values for LOG_LEVEL
+# 10: DEBUG
+# 20: INFO
+# 30: WARN
+# 40: ERROR
+LOG_LEVEL: 10
+LOG_FORMAT: '%(asctime)s File "%(pathname)s", line %(lineno)d, in <%(module)s>, %(funcName)s(): %(levelname)s (%(name)s): %(message)s'
+
+# Connection settings for Flask's MongoEngine driver
+# Connects to a local database by default
+# Modify as needed for use with an external database
+MONGODB_SETTINGS:
+  db: flask-db-development
+  host: 127.0.0.1
+  port: 27017

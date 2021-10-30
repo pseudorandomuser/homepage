@@ -1,23 +1,43 @@
 APP_PATH=./app
+
+PYTHON_VER=python3.9
+IGNORED_ERRORS=E128
+
 VENV_PATH=./venv
-PYTHON_PATH=python3.9
 VENV=. ${VENV_PATH}/bin/activate
+
+SECRETS_FILE=secrets.yaml
+ENVIRONMENTS_PATH=./config/environments
+SECRETS_CMD="import secrets; print(f'SECRET_KEY: {secrets.token_hex()}')"
+SECRETS_DEV=${ENVIRONMENTS_PATH}/development/${SECRETS_FILE}
+SECRETS_PROD=${ENVIRONMENTS_PATH}/production/${SECRETS_FILE}
 
 .PHONY: deps
 deps:
-	${PYTHON_PATH} -m venv ${VENV_PATH}
+	${PYTHON_VER} -m venv ${VENV_PATH}
 	${VENV} ; \
-		pip install -r requirements.txt ; \
-		pip install -r requirements-dev.txt
+		if [ -f requirements.txt ]; then pip install -r requirements.txt ; fi ; \
+		if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt ; fi
 
 .PHONY: check
 check: deps
 	${VENV} ; pylint -Ev ${APP_PATH}
-	${VENV} ; flake8 --show-source --statistics ${APP_PATH}
+	${VENV} ; flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${APP_PATH}
 	${VENV} ; mypy --ignore-missing-import ${APP_PATH}
 
 .PHONY: clean
 clean:
-	rm -rf ${VENV_PATH}
-	rm -rf ./.mypy_cache
-	find . -type d -name __pycache__ -delete
+	rm -rf "${VENV_PATH}"
+	rm -rf "./.mypy_cache"
+	find . -type d -name "__pycache__" -delete
+	find . -name "${SECRETS_FILE}" -delete
+
+.PHONY: setup
+setup: deps
+	${VENV} ; \
+		if [ ! -f ${SECRETS_DEV} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} >> ${SECRETS_DEV} ; fi ; \
+		if [ ! -f ${SECRETS_PROD} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} >> ${SECRETS_PROD} ; fi
+
+.PHONY: run
+run: setup
+	${VENV} ; FLASK_ENV=development flask run

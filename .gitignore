@@ -1,6 +1,20 @@
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+
+# Unnecessary
+etc/
+upload/
+
+# Python
 venv/
+__pycache__/
+
+# uWSGI
 *.ini
 *.sock
-.DS_Store
-__pycache__/
-upload/
+
+# Sensitive
+secrets.yaml

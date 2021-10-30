@@ -1,7 +1,4 @@
-# Application Support
-uwsgi
-
-# Static Code Analysis
-mypy
-flake8
-pylint
+# Static code analysis
+mypy>=0.910
+flake8>=4.0.1
+pylint>=2.11.1

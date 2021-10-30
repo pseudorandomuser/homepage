@@ -1,0 +1,2 @@
+# Formatting for date strings
+DATE_FORMAT: '%a %b %d %Y %H:%M:%S'
