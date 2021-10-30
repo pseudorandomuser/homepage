@@ -1,3 +1,7 @@
-mypy
+# Application Support
 uwsgi
+
+# Static Code Analysis
+mypy
 flake8
+pylint

@@ -1,7 +1,8 @@
 from app.shared.mongodb import mongo
+from mongoengine import StringField
 
 
 class User(mongo.Document):
-    first_name = mongo.StringField()
-    last_name = mongo.StringField()
-    email = mongo.StringField()
+    first_name = StringField()
+    last_name = StringField()
+    email = StringField()

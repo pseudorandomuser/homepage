@@ -6,11 +6,15 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  APP_PATH: ./app
+
 jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout Repository
+      uses: actions/checkout@v2
     - name: Setup Python@3.9
       uses: actions/setup-python@v2
       with:
@@ -20,9 +24,9 @@ jobs:
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
-    - name: Run Flake8
-      run: |
-        flake8 ./app --show-source --statistics
-    - name: Run Mypy
-      run: |
-        mypy --ignore-missing-import ./app
+    - name: Check with Pylint
+      run: pylint -Ev ${APP_PATH}
+    - name: Check with Flake8
+      run: flake8 --show-source --statistics ${APP_PATH}
+    - name: Check with Mypy
+      run: mypy --ignore-missing-import ${APP_PATH}

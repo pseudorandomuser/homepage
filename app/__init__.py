@@ -16,5 +16,5 @@ def _initialize_app(config: Dict[str, Any]) -> Flask:
 
 
 with open('config.json', 'r') as config_handle:
-    config: Dict[str, Any] = json.load(config_handle)
-    app: Flask = _initialize_app(config)
+    _config: Dict[str, Any] = json.load(config_handle)
+    app: Flask = _initialize_app(_config)

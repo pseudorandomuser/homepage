@@ -1,6 +1,6 @@
 venv/
 *.ini
-*.pdf
 *.sock
 .DS_Store
 __pycache__/
+upload/

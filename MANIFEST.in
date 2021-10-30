@@ -1,0 +1,4 @@
+include config.json
+graft app/static
+graft app/templates
+global-exclude *.py[ocd]
