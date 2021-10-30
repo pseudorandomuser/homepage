@@ -29,8 +29,9 @@ check: deps
 clean:
 	rm -rf "${VENV_PATH}"
 	rm -rf "./.mypy_cache"
-	find . -type d -name "__pycache__" -delete
+	find . -name ".DS_Store" -delete
 	find . -name "${SECRETS_FILE}" -delete
+	find . -type d -name "__pycache__" -delete
 
 .PHONY: setup
 setup: deps

@@ -2,7 +2,7 @@ import os
 import yaml
 import logging
 
-from typing import Dict
+from typing import Any, Dict, Optional, Union
 
 from flask import Flask
 
@@ -37,7 +37,7 @@ def __create_application() -> Flask:
 
     app: Flask = Flask(__name__)
 
-    env: str = app.config.get('ENV')
+    env: str = app.config['ENV']
     env_path: str = os.path.join('config', 'environments', env)
 
     __apply_configs(app, 'config', 'defaults.yaml')
