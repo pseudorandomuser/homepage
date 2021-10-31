@@ -36,8 +36,8 @@ clean:
 .PHONY: setup
 setup: deps
 	${VENV} ; \
-		if [ ! -f ${SECRETS_DEV} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} >> ${SECRETS_DEV} ; fi ; \
-		if [ ! -f ${SECRETS_PROD} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} >> ${SECRETS_PROD} ; fi
+		if [ ! -f ${SECRETS_DEV} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} > ${SECRETS_DEV} ; fi ; \
+		if [ ! -f ${SECRETS_PROD} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} > ${SECRETS_PROD} ; fi
 
 .PHONY: run
 run: setup

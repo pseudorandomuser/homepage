@@ -1,6 +1,10 @@
 # Environment identifier
 environment: production
 
+VIEWS:
+  - base
+  - auth
+
 # Possible values for LOG_LEVEL
 # 10: DEBUG
 # 20: INFO

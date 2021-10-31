@@ -11,6 +11,11 @@
 		<a{# href="/contact" #} href="mailto:s8pijost@stud.uni-saarland.de">Contact</a>
 		{# <a href="/imprint">Imprint</a> #}
 	</div>
+	{% if config.ENV == 'development' %}
+	<div id="navbar-dev">
+		<a style="color:red;">Developer Mode</a>
+	</div>
+	{% endif %}
 	<div id="navbar-right">
 		<a href="https://github.com/pseudorandomuser"><img class="social-logo" alt="github" src="/static/img/social/github-orig.png"></a>
 		<a href="https://www.linkedin.com/in/pit-jost/"><img class="social-logo" alt="linkedin" src="/static/img/social/linkedin-square.png"></a>

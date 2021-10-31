@@ -15,9 +15,9 @@ from app.shared.database import db
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def __apply_configs(app: Flask, base_dir: str, *files: str) -> None:
+def __apply_configs(app: Flask, base_dir: str, *conf_files: str) -> None:
 
-    for conf_file in files:
+    for conf_file in conf_files:
         conf_path: str = os.path.join(base_dir, conf_file)
         print(f'{__name__}: Loading configuration file: "{conf_path}"')
 
@@ -48,15 +48,15 @@ def __create_application() -> Flask:
         format=app.config['LOG_FORMAT'],
         datefmt=app.config['DATE_FORMAT']
     )
-    logger.info('Configured logging for environment: "%s".', app.env)
+    logger.info('Configuring application for environment: "%s".', app.env)
 
-    logger.debug('Using MongoDB settings: <%s>',
-        repr(app.config["MONGODB_SETTINGS"]))
+    logger.debug('Initializing database: %s', app.config["MONGODB_SETTINGS"])
     db.init_app(app)
 
-    logger.debug('Registering blueprints to application...')
+    logger.debug('Registering views...')
     register_views(app)
 
+    logger.debug('Application is now configured.')
     return app
 
 

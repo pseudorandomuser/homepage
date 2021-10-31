@@ -7,7 +7,10 @@ setup(
     include_package_data=True,
     zip_safe=False,
     install_requires=[
-        'flask',
-        'flask_mongoengine'
+        'uwsgi>=2.0.20',
+        'flask>=2.0.2',
+        'flask_mongoengine>=1.0.0',
+        'pyyaml>=6.0',
+        'types-PyYAML>=6.0.0'
     ],
 )
