@@ -5,7 +5,7 @@ app = Blueprint('base', __name__)
 
 @app.route('/')
 def index() -> str:
-    return render_template('index.html', home=True)
+    return render_template('index.html')
 
 
 @app.route('/about')

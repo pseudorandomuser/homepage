@@ -1,2 +1,7 @@
 # Formatting for date strings
 DATE_FORMAT: '%a %b %d %Y %H:%M:%S'
+
+# Crypto settings
+HASH_ALGORITHM: sha256
+HASH_ITERATIONS: 310000
+SECRET_LENGTH: 32

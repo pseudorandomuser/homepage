@@ -6,9 +6,11 @@ IGNORED_ERRORS=E128
 VENV_PATH=./venv
 VENV=. ${VENV_PATH}/bin/activate
 
-SECRETS_FILE=secrets.yaml
+CONFIG_PATH=./config
 ENVIRONMENTS_PATH=./config/environments
-SECRETS_CMD="import secrets; print(f'SECRET_KEY: {secrets.token_hex()}')"
+SECRETS_LENGTH=32
+SECRETS_FILE=secrets.yaml
+SECRETS_CMD="import secrets; print(f'SECRET_KEY: {secrets.token_hex(${SECRETS_LENGTH})}')"
 SECRETS_DEV=${ENVIRONMENTS_PATH}/development/${SECRETS_FILE}
 SECRETS_PROD=${ENVIRONMENTS_PATH}/production/${SECRETS_FILE}
 
@@ -41,4 +43,4 @@ setup: deps
 
 .PHONY: run
 run: setup
-	${VENV} ; FLASK_ENV=development flask run
+	${VENV} ; FLASK_ENV=development flask run --extra-files=${CONFIG_PATH}

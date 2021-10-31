@@ -1,19 +1,24 @@
 <div class="navbar" id="navbar">
 	<div id="navbar-left">
-		<a href="{% if home %}#{% else %}/{% endif %}">
+		<a href="{% if request.path == '/' %}#{% else %}/{% endif %}">
 			<img id="main-logo" alt="logo" src="/static/img/logo.png">
 		</a>
 	</div>
-	<div id="navbar-center">
-		<strike><a{# href="/about" #} style="color:grey;">About</a></strike>
-		<strike><a{# href="/projects" #} style="color:grey;">Projects</a></strike>
-		<a href="/static/upload/admin/resume.pdf">Resume</a>
-		<a{# href="/contact" #} href="mailto:s8pijost@stud.uni-saarland.de">Contact</a>
-		{# <a href="/imprint">Imprint</a> #}
-	</div>
 	{% if config.ENV == 'development' %}
 	<div id="navbar-dev">
-		<a style="color:red;">Developer Mode</a>
+		<a class="error">Development Mode</a>
+	</div>
+	{% endif %}
+	<div id="navbar-center">
+		<a{% if config.ENV == 'development' %} href="/about"{% else %} class="disabled"{% endif %}>About</a>
+		<a{% if config.ENV == 'development' %} href="/projects"{% else %} class="disabled"{% endif %}>Projects</a>
+		<a href="/static/upload/admin/resume.pdf">Resume</a>
+		<a href="mailto:s8pijost@stud.uni-saarland.de">Contact</a>
+		<a href="/auth/{% if session.username %}logout">Logout{% else %}login">Login{% endif %}</a>
+	</div>
+	{% if session.username %}
+	<div id="navbar-authenticated">
+		<a class="success">Elevated Privileges</a>
 	</div>
 	{% endif %}
 	<div id="navbar-right">

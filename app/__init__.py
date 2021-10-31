@@ -9,8 +9,8 @@ from flask import Flask
 from yaml import Loader
 from yaml.scanner import ScannerError
 
-from app.views import register_views
 from app.shared.database import db
+from app.views import register_views
 
 logger: logging.Logger = logging.getLogger(__name__)
 
