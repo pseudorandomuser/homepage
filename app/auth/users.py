@@ -23,15 +23,16 @@ def create_user(
 
     logger.debug('Creating new user object for username: "%s"', username)
     password_hash, password_salt = crypto.prepare_password(password)
+
     user_object: User = User(
         username=username,
         password_hash=password_hash,
         password_salt=password_salt,
+        created=datetime.now(),
+        last_seen=datetime.now(),
         firstname=firstname,
         lastname=lastname,
-        email=email,
-        created=datetime.now(),
-        last_seen=datetime.now()
+        email=email
     )
 
     try:
@@ -54,14 +55,30 @@ def create_user(
 def find_user(username: str) -> Optional[User]:
 
     logger.debug('Querying database for user "%s"', username)
-
     user_objects: QuerySet = User.objects(username=username)
+
     if user_objects.count() == 1:
         logger.debug('Found entry for user "%s" in database', username)
         return user_objects.first()
 
     logger.debug('Could not find entry for user "%s" in database', username)
     return None
+
+
+def touch_user(user_object: User) -> bool:
+
+    username: str = user_object.username
+    logging.debug('Touching timestamp for user "%s"', username)
+
+    try:
+        user_object.last_seen = datetime.now()
+        user_object.save()
+        return True
+
+    except Exception as exception:
+        logging.error('Could not touch timestamp for user "%s": %s',
+            username, str(exception))
+        return False
 
 
 def authenticate_user(username: str, password: str) -> Tuple[bool, str]:
@@ -80,10 +97,12 @@ def authenticate_user(username: str, password: str) -> Tuple[bool, str]:
     logging.debug('Comparing password hashes for user "%s"', username)
     computed_password_hash, _ = crypto.prepare_password(
         password, user_object.password_salt)
+
     if user_object.password_hash == computed_password_hash:
         logging.info('Successful login with user: "%s"', username)
+        touch_user(user_object)
         return (True, 'Login successful.')
 
     logging.warn('Authentication failed with invalid credentials '
-        ' for user "%s"', username)
+        'for user "%s"', username)
     return (False, 'Invalid username or password.')

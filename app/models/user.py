@@ -19,9 +19,8 @@ class User(Document):
     username = StringField(required=True, unique=True)
     password_hash = StringField(required=True)
     password_salt = StringField(required=True)
-    roles = ListField(IntField(), required=True, default=[
-        Role.UNPRIVILEGED
-    ])
+    roles = ListField(IntField(), required=True,
+        default=[Role.UNPRIVILEGED])
 
     created = DateTimeField(required=True)
     last_seen = DateTimeField(required=True)

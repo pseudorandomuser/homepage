@@ -5,6 +5,9 @@ VIEWS:
   - base
   - auth
 
+COMMANDS:
+  - auth
+
 # Possible values for LOG_LEVEL
 # 10: DEBUG
 # 20: INFO

@@ -9,7 +9,7 @@ etc/
 upload/
 
 # Python
-venv/
+.venv/
 __pycache__/
 
 # uWSGI

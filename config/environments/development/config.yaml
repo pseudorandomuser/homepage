@@ -4,7 +4,9 @@ environment: development
 VIEWS:
   - base
   - auth
-  - test
+
+COMMANDS:
+  - auth
 
 # Possible values for LOG_LEVEL
 # 10: DEBUG

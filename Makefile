@@ -3,7 +3,7 @@ APP_PATH=./app
 PYTHON_VER=python3.9
 IGNORED_ERRORS=E128
 
-VENV_PATH=./venv
+VENV_PATH=./.venv
 VENV=. ${VENV_PATH}/bin/activate
 
 CONFIG_PATH=./config

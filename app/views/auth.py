@@ -24,7 +24,7 @@ def login():
 
     auth_success, auth_message = users.authenticate_user(username, password)
     if auth_success:
-        session['username'] = username
+        session.update({'username': username})
         return redirect('/')
 
     return render_template('login.html', error=auth_message)
