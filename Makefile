@@ -38,7 +38,7 @@ clean:
 	rm -rf "./.mypy_cache"
 	find . -name ".DS_Store" -delete
 	find . -name "${SECRETS_FILENAME}" -delete
-	find . -type d -name "__pycache__" -delete
+	find . -type d -name "__pycache__" -exec rm -rfv {} \;
 
 .PHONY: setup
 setup: deps
