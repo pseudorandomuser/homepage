@@ -21,8 +21,8 @@ deps:
 	${PYTHON_VER} -m venv ${VENV_PATH}
 	@for REQUIREMENT in $(REQUIREMENTS) ; do \
 		echo "Installing requirements from $$REQUIREMENT..." ; \
-		${VENV} ; if [ -f $$REQUIREMENT ]; then \
-			pip install -r $$REQUIREMENT ; \
+		if [ -f $$REQUIREMENT ]; then \
+			${VENV} ; pip install -r $$REQUIREMENT ; \
 		fi \
 	done
 
@@ -48,7 +48,7 @@ setup: deps
 			echo "Generating secrets: $$SECRETS_FILE" ; \
 			for SECRET_KEY in $(SECRETS_KEYS) ; do \
 				printf "$$SECRET_KEY: " >> $$SECRETS_FILE ; \
-				${PYTHON_VER} -c ${SECRETS_CMD} >> $$SECRETS_FILE ; \
+				${VENV} ; ${PYTHON_VER} -c ${SECRETS_CMD} >> $$SECRETS_FILE ; \
 			done \
 		fi \
 	done
