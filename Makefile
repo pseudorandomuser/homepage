@@ -1,25 +1,30 @@
 APP_PATH=./app
 
-PYTHON_VER=python3.9
+PYTHON_VER=python3.10
 IGNORED_ERRORS=E128
+REQUIREMENTS=requirements.txt requirements-dev.txt
 
 VENV_PATH=./.venv
 VENV=. ${VENV_PATH}/bin/activate
 
-CONFIG_PATH=./config
+ENVIRONMENTS=production development
 ENVIRONMENTS_PATH=./config/environments
+
 SECRETS_LENGTH=32
-SECRETS_FILE=secrets.yaml
-SECRETS_CMD="import secrets; print(f'SECRET_KEY: {secrets.token_hex(${SECRETS_LENGTH})}')"
-SECRETS_DEV=${ENVIRONMENTS_PATH}/development/${SECRETS_FILE}
-SECRETS_PROD=${ENVIRONMENTS_PATH}/production/${SECRETS_FILE}
+SECRETS_FILENAME=secrets.yaml
+SECRETS_KEYS=SECRET_KEY SECRET_FLAG
+SECRETS_CMD="import secrets; print(secrets.token_hex(${SECRETS_LENGTH}))"
+
 
 .PHONY: deps
 deps:
 	${PYTHON_VER} -m venv ${VENV_PATH}
-	${VENV} ; \
-		if [ -f requirements.txt ]; then pip install -r requirements.txt ; fi ; \
-		if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt ; fi
+	@for REQUIREMENT in $(REQUIREMENTS) ; do \
+		echo "Installing requirements from $$REQUIREMENT..." ; \
+		${VENV} ; if [ -f $$REQUIREMENT ]; then \
+			pip install -r $$REQUIREMENT ; \
+		fi \
+	done
 
 .PHONY: check
 check: deps
@@ -32,15 +37,22 @@ clean:
 	rm -rf "${VENV_PATH}"
 	rm -rf "./.mypy_cache"
 	find . -name ".DS_Store" -delete
-	find . -name "${SECRETS_FILE}" -delete
+	find . -name "${SECRETS_FILENAME}" -delete
 	find . -type d -name "__pycache__" -delete
 
 .PHONY: setup
 setup: deps
-	${VENV} ; \
-		if [ ! -f ${SECRETS_DEV} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} > ${SECRETS_DEV} ; fi ; \
-		if [ ! -f ${SECRETS_PROD} ]; then ${PYTHON_VER} -c ${SECRETS_CMD} > ${SECRETS_PROD} ; fi
+	@for ENVIRONMENT in $(ENVIRONMENTS) ; do \
+		SECRETS_FILE=${ENVIRONMENTS_PATH}/$$ENVIRONMENT/${SECRETS_FILENAME} ; \
+		if [ ! -f $$SECRETS_FILE ]; then \
+			echo "Generating secrets: $$SECRETS_FILE" ; \
+			for SECRET_KEY in $(SECRETS_KEYS) ; do \
+				printf "$$SECRET_KEY: " >> $$SECRETS_FILE ; \
+				${PYTHON_VER} -c ${SECRETS_CMD} >> $$SECRETS_FILE ; \
+			done \
+		fi \
+	done
 
-.PHONY: run
-run: setup
+.PHONY: dev
+dev: setup
 	${VENV} ; FLASK_ENV=development flask run --extra-files=${CONFIG_PATH}

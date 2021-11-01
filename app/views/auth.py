@@ -22,9 +22,9 @@ def login():
         return render_template('login.html',
             error='Username and password can not be empty!')
 
-    auth_success, auth_message = users.authenticate_user(username, password)
-    if auth_success:
-        session.update({'username': username})
+    user_object, auth_message = users.authenticate_user(username, password)
+    if user_object:
+        session.update({'user': user_object})
         return redirect('/')
 
     return render_template('login.html', error=auth_message)

@@ -2,7 +2,6 @@ from mongoengine.queryset.manager import QuerySetManager
 from mongoengine.document import Document
 from mongoengine.fields import (
     IntField,
-    ListField,
     EmailField,
     StringField,
     BooleanField,
@@ -19,11 +18,10 @@ class User(Document):
     username = StringField(required=True, unique=True)
     password_hash = StringField(required=True)
     password_salt = StringField(required=True)
-    roles = ListField(IntField(), required=True,
-        default=[Role.UNPRIVILEGED])
+    role = IntField(required=True, default=Role.UNPRIVILEGED)
 
     created = DateTimeField(required=True)
-    last_seen = DateTimeField(required=True)
+    last_login = DateTimeField(required=True)
     locked = BooleanField(required=True, default=False)
 
     firstname = StringField(max_length=64)

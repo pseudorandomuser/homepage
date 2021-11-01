@@ -12,6 +12,9 @@
 			<div style="height:150px;"></div>
 			<h1>Website under construction...</h1>
 			<h3>Please use the links in the navigation bar for further information.</h3>
+			{% if session.user %}
+			<h2>FLAG{{ '{' }}{{ config.SECRET_FLAG }}{{ '}' }}</h2>
+			{% endif %}
 			<div style="height:150px;"></div>
 		</div>
 	</section>

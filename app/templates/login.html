@@ -6,6 +6,27 @@
 	<section class="head-section">
 		<div class="head-section-content">
             <div style="height:150px;"></div>
+            <h1>Hack me!</h1>
+            <p>I've been stalling on the development of this website for about a year,<br>
+            but I got bored with life and decided to implement user authentication.<br>
+            Since I will probably be leaving this project in a dark corner again for a while now,<br>
+            I'm inviting you to play a game in the meantime!</p>
+
+            <p>There is a secret flag hidden on the main page.<br>
+            It is only shown to authenticated users with a valid session cookie.<br>
+            Feel free to attempt to break my authentication mechanism and steal it.</p>
+
+            <p>If you find the flag or want some insights into the inner workings,<br>
+            feel free to contact me using the contact information in the navigation bar!</p>
+
+            <u><h3>NOTE: You only have permission to exploit the endpoints exposed by<br>
+            the web server. This does not include abusing possible vulnerabilities<br>
+            in the web server software with the goal of compromising the server's <br>
+            host operating system or any part of its internal network. If you still <br>
+            decide to do so, I will be mad.</h3></u>
+
+            <h3>Cheers!</h3>
+
 			<form action="/auth/login" method="post">
                 <input type="text" placeholder="Username" name="username" required /><br>
                 <input type="password" placeholder="Password" name="password" required /><br>

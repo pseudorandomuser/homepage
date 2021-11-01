@@ -14,11 +14,15 @@
 		<a{% if config.ENV == 'development' %} href="/projects"{% else %} class="disabled"{% endif %}>Projects</a>
 		<a href="/static/upload/admin/resume.pdf">Resume</a>
 		<a href="mailto:s8pijost@stud.uni-saarland.de">Contact</a>
-		<a href="/auth/{% if session.username %}logout">Logout{% else %}login">Login{% endif %}</a>
+		<a href="/auth/{% if session.user %}logout">Logout{% else %}login">Login{% endif %}</a>
 	</div>
-	{% if session.username %}
+	{% if session.user %}
 	<div id="navbar-authenticated">
+		{% if session.user.role < 30 %}
+		<a>Standard Privileges</a>
+		{% else %}
 		<a class="success">Elevated Privileges</a>
+		{% endif %}
 	</div>
 	{% endif %}
 	<div id="navbar-right">

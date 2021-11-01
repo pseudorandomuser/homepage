@@ -5,7 +5,7 @@ from datetime import datetime
 from typing import Optional, Tuple
 
 from mongoengine.queryset import QuerySet
-from mongoengine.errors import NotUniqueError
+from mongoengine.errors import NotUniqueError, OperationError
 
 from app.auth import crypto
 from app.models.user import User
@@ -18,7 +18,8 @@ def create_user(
     password: str,
     firstname: Optional[str] = None,
     lastname: Optional[str] = None,
-    email: Optional[str] = None
+    email: Optional[str] = None,
+    role: Optional[int] = None
 ) -> bool:
 
     logger.debug('Creating new user object for username: "%s"', username)
@@ -29,10 +30,11 @@ def create_user(
         password_hash=password_hash,
         password_salt=password_salt,
         created=datetime.now(),
-        last_seen=datetime.now(),
+        last_login=datetime.now(),
         firstname=firstname,
         lastname=lastname,
-        email=email
+        email=email,
+        role=role
     )
 
     try:
@@ -65,44 +67,70 @@ def find_user(username: str) -> Optional[User]:
     return None
 
 
-def touch_user(user_object: User) -> bool:
+def delete_user(username: str) -> bool:
 
-    username: str = user_object.username
-    logging.debug('Touching timestamp for user "%s"', username)
+    if not (user_object := find_user(username)):
+        logging.error('User deletion failed with non-existent user: "%s"',
+            username)
+        return False
 
     try:
-        user_object.last_seen = datetime.now()
-        user_object.save()
+        user_object.delete()
+        logging.info('User "%s" deleted', username)
         return True
 
-    except Exception as exception:
-        logging.error('Could not touch timestamp for user "%s": %s',
-            username, str(exception))
+    except OperationError as error:
+        logging.error('User deletion failed for user "%s": %s',
+            username, str(error))
         return False
 
 
-def authenticate_user(username: str, password: str) -> Tuple[bool, str]:
+def change_password(username: str, password: str) -> bool:
+
+    if not (user_object := find_user(username)):
+        logging.error('Password change failed with non-existent user: "%s"',
+            username)
+        return False
+
+    try:
+        user_object.password_hash, user_object.password_salt = \
+            crypto.prepare_password(password)
+        user_object.save()
+        logging.info('Password changed for user "%s"', username)
+        return True
+
+    except OperationError as error:
+        logging.error('Password change failed for user "%s": %s',
+            username, str(error))
+        return False
+
+
+def authenticate_user(
+    username: str,
+    password: str
+) -> Tuple[Optional[User], str]:
 
     logging.debug('Attempting to authenticate user "%s"', username)
 
     if not (user_object := find_user(username)):
         logging.error('Login attempt failed with non-existent user: "%s"',
             username)
-        return (False, 'User does not exist.')
+        return (None, 'User does not exist.')
 
     if user_object.locked:
         logging.warn('Authentication attempt with locked user: "%s"', username)
-        return (False, 'Your account is locked. Contact an administrator.')
+        return (None, 'Your account is locked. Contact an administrator.')
 
     logging.debug('Comparing password hashes for user "%s"', username)
     computed_password_hash, _ = crypto.prepare_password(
         password, user_object.password_salt)
 
     if user_object.password_hash == computed_password_hash:
+        user_object.last_login = datetime.now()
+        user_object.save()
         logging.info('Successful login with user: "%s"', username)
-        touch_user(user_object)
-        return (True, 'Login successful.')
+        return (user_object, 'Login successful.')
 
     logging.warn('Authentication failed with invalid credentials '
         'for user "%s"', username)
-    return (False, 'Invalid username or password.')
+    return (None, 'Invalid username or password.')
