@@ -1,6 +1,6 @@
 APP_PATH=./app
 
-PYTHON_VER=python3.10
+PYTHON_VER=python3.9
 IGNORED_ERRORS=E128
 REQUIREMENTS=requirements.txt requirements-dev.txt
 
