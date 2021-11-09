@@ -9,10 +9,10 @@ on:
 env:
   APP_PATH: ./app
   IGNORED_ERRORS: E128
-  DEPLOY_PATH: /srv/flask
 
 jobs:
   check:
+    name: "Run Python Checks"
     runs-on: ubuntu-latest
     steps:
     - name: Checkout Repository
