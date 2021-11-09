@@ -35,6 +35,8 @@ jobs:
 
   deploy:
     name: "Deploy to Production"
+    needs: [ check ]
+    if: success()
     runs-on: ubuntu-latest
     steps:
     - name: Configure SSH
@@ -61,3 +63,4 @@ jobs:
       run: ssh production '/usr/bin/git -C ${DEPLOY_PATH} fetch && /usr/bin/git -C ${DEPLOY_PATH} reset --hard origin/master'
     - name: Start Application Server
       run: ssh production 'sudo /bin/systemctl start uwsgi.service'
+      if: always()
