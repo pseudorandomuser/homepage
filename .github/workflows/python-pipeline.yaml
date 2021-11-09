@@ -39,7 +39,7 @@ jobs:
     if: success()
     runs-on: ubuntu-latest
     steps:
-    - name: Generate ssh configuration
+    - name: Write ssh configuration
       run: |
         mkdir -p ~/.ssh/
         echo "${SSH_KEY}" > ~/.ssh/production.key
