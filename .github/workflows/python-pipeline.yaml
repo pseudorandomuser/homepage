@@ -9,6 +9,7 @@ on:
 env:
   APP_PATH: ./app
   IGNORED_ERRORS: E128
+  DEPLOY_PATH: /srv/flask
 
 jobs:
   check:
@@ -31,3 +32,32 @@ jobs:
       run: flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${APP_PATH}
     - name: Check with Mypy
       run: mypy --ignore-missing-import ${APP_PATH}
+
+  deploy:
+    name: "Deploy to Production"
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${SSH_KEY}" > ~/.ssh/production.key
+        chmod 600 ~/.ssh/production.key
+        cat >>~/.ssh/config <<EOF
+        Host production
+          HostName ${SSH_HOST}
+          User ${SSH_USER}
+          Port ${SSH_PORT}
+          IdentityFile ~/.ssh/production.key
+          StrictHostKeyChecking no
+        EOF
+      env:
+        SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+        SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+        SSH_USER: ${{ secrets.PROD_SSH_USER }}
+        SSH_KEY: ${{ secrets.PROD_SSH_KEY }}
+    - name: Stop Application Server
+      run: ssh production 'sudo /bin/systemctl stop uwsgi.service'
+    - name: Pull Source from Repository
+      run: ssh production '/usr/bin/git -C ${DEPLOY_PATH} fetch && /usr/bin/git -C ${DEPLOY_PATH} reset --hard origin/master'
+    - name: Start Application Server
+      run: ssh production 'sudo /bin/systemctl start uwsgi.service'
