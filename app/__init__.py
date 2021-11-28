@@ -17,42 +17,39 @@ from flask_mongoengine import MongoEngine
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def __apply_configs(
+def _load_config_files(
     app: Flask,
-    base_dir: str,
-    *conf_files: str
+    config_paths: List[str]
 ) -> None:
 
-    for conf_file in conf_files:
-        conf_path: str = os.path.join(base_dir, conf_file)
-        print(f'{__name__}: Loading configuration file: "{conf_path}"')
+    for config_path in config_paths:
+        print(f'{__name__}: Loading configuration file: "{config_path}"')
 
-        if not os.path.isfile(conf_path):
+        if not os.path.isfile(config_path):
             raise FileNotFoundError('Required configuration file is '
-                f'missing: "{conf_path}"')
+                f'missing: "{config_path}"')
 
-        with open(conf_path, 'r') as conf_handle:
+        with open(config_path, 'r') as config_handle:
             try:
-                conf_map: Dict = yaml.load(conf_handle, Loader=Loader)
-                app.config.update(conf_map)
+                config_map: Dict = yaml.load(config_handle, Loader=Loader)
+                app.config.update(config_map)
             except ScannerError as error:
                 raise error
 
 
-def __register_components(
+def _register_components(
     app: Flask,
-    root_module: str,
-    submodules: List[str]
+    modules: List[str]
 ) -> None:
 
-    for module_name in submodules:
-        module_path: str = f'{__name__}.{root_module}.{module_name}'
+    for module_name in modules:
+        module_path: str = f'{__name__}.{module_name}'
         logger.debug('Attempting to load module <%s>', module_path)
 
         try:
             module: ModuleType = importlib.import_module(module_path)
         except ModuleNotFoundError as error:
-            logger.error('Could not find module <%s>', module_path)
+            logger.error('Could not find enabled module <%s>', module_path)
             raise error
 
         for component in module.__dict__.values():
@@ -68,17 +65,20 @@ def __register_components(
                 app.cli.add_command(component)
 
 
-def __create_application() -> Flask:
+def _create_application() -> Flask:
 
     app: Flask = Flask(__name__)
 
     env: str = app.config['ENV']
 
-    conf_path: str = 'config'
-    env_path: str = os.path.join(conf_path, 'environments', env)
+    config_root: str = 'instance'
+    config_files_default: List[str] = ['defaults.yaml']
+    config_files_env: List[str] = ['config.yaml', 'secrets.yaml']
 
-    __apply_configs(app, conf_path, 'defaults.yaml')
-    __apply_configs(app, env_path, 'secrets.yaml', 'config.yaml')
+    config_paths: List[str] = \
+        [os.path.join(config_root, name) for name in config_files_default] + \
+        [os.path.join(config_root, env, name) for name in config_files_env]
+    _load_config_files(app, config_paths)
 
     logging.basicConfig(
         level=app.config['LOG_LEVEL'],
@@ -91,16 +91,12 @@ def __create_application() -> Flask:
     database: MongoEngine = MongoEngine()
     database.init_app(app)
 
-    logger.debug('Registering views...')
-    enabled_views: List[str] = app.config['VIEWS']
-    __register_components(app, 'views', enabled_views)
-
-    logger.debug('Registering commands...')
-    enabled_commands: List[str] = app.config['COMMANDS']
-    __register_components(app, 'commands', enabled_commands)
+    logger.debug('Registering components...')
+    enabled_modules: List[str] = app.config['MODULES']
+    _register_components(app, enabled_modules)
 
     logger.debug('Application is now configured.')
     return app
 
 
-app: Flask = __create_application()
+app: Flask = _create_application()

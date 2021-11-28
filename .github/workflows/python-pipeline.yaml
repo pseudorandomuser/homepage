@@ -12,7 +12,7 @@ env:
 
 jobs:
   check:
-    name: "Run python checks"
+    name: Run python checks
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
       run: mypy --ignore-missing-import ${APP_PATH}
 
   deploy:
-    name: "Deploy to production"
+    name: Deploy to production
     needs: [ check ]
     if: success()
     runs-on: ubuntu-latest
@@ -42,7 +42,7 @@ jobs:
     - name: Write ssh configuration
       run: |
         mkdir -p ~/.ssh/
-        echo "${SSH_KEY}" > ~/.ssh/production.key
+        echo ${SSH_KEY} > ~/.ssh/production.key
         chmod 600 ~/.ssh/production.key
         cat >>~/.ssh/config <<EOF
         Host production
@@ -60,7 +60,12 @@ jobs:
     - name: Stop application server
       run: ssh production 'sudo /bin/systemctl stop uwsgi.service'
     - name: Fetch source from repository
-      run: ssh production '/usr/bin/git -C ${DEPLOY_PATH} fetch && /usr/bin/git -C ${DEPLOY_PATH} reset --hard origin/master'
+      run: |
+        ssh production '
+          cd ${DEPLOY_PATH} &&
+          /usr/bin/git fetch &&
+          /usr/bin/git reset --hard origin/master
+        '
     - name: Start application server
       run: ssh production 'sudo /bin/systemctl start uwsgi.service'
       if: always()

@@ -8,7 +8,7 @@ VENV_PATH=./.venv
 VENV=. ${VENV_PATH}/bin/activate
 
 ENVIRONMENTS=production development
-ENVIRONMENTS_PATH=./config/environments
+ENVIRONMENTS_PATH=./instance
 
 SECRETS_LENGTH=32
 SECRETS_FILENAME=secrets.yaml
@@ -17,7 +17,8 @@ SECRETS_CMD="import secrets; print(secrets.token_hex(${SECRETS_LENGTH}))"
 
 
 .PHONY: deps
-deps:
+deps: ${VENV_PATH}/.deps
+${VENV_PATH}/.deps:
 	${PYTHON_VER} -m venv ${VENV_PATH}
 	@for REQUIREMENT in $(REQUIREMENTS) ; do \
 		echo "Installing requirements from $$REQUIREMENT..." ; \
@@ -25,6 +26,7 @@ deps:
 			${VENV} ; pip install -r $$REQUIREMENT ; \
 		fi \
 	done
+	touch "${@}"
 
 .PHONY: check
 check: deps

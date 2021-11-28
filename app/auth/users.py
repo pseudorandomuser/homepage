@@ -1,8 +1,7 @@
 import logging
 
+from typing import Optional
 from datetime import datetime
-
-from typing import Optional, Tuple
 
 from mongoengine.queryset import QuerySet
 from mongoengine.errors import NotUniqueError, OperationError
@@ -11,6 +10,12 @@ from app.auth import crypto
 from app.models.user import User
 
 logger = logging.getLogger(__name__)
+
+
+class AuthenticationError(Exception):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 def create_user(
@@ -108,18 +113,19 @@ def change_password(username: str, password: str) -> bool:
 def authenticate_user(
     username: str,
     password: str
-) -> Tuple[Optional[User], str]:
+) -> User:
 
     logging.debug('Attempting to authenticate user "%s"', username)
 
     if not (user_object := find_user(username)):
         logging.error('Login attempt failed with non-existent user: "%s"',
             username)
-        return (None, 'User does not exist.')
+        raise AuthenticationError('User does not exist.')
 
     if user_object.locked:
         logging.warn('Authentication attempt with locked user: "%s"', username)
-        return (None, 'Your account is locked. Contact an administrator.')
+        raise AuthenticationError('Your account is locked. '
+            'Contact an administrator.')
 
     logging.debug('Comparing password hashes for user "%s"', username)
     computed_password_hash, _ = crypto.prepare_password(
@@ -129,8 +135,8 @@ def authenticate_user(
         user_object.last_login = datetime.now()
         user_object.save()
         logging.info('Successful login with user: "%s"', username)
-        return (user_object, 'Login successful.')
+        return user_object
 
     logging.warn('Authentication failed with invalid credentials '
         'for user "%s"', username)
-    return (None, 'Invalid username or password.')
+    raise AuthenticationError('Invalid username or password.')
