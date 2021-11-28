@@ -26,7 +26,7 @@ ${VENV_PATH}/.deps:
 			${VENV} ; pip install -r $$REQUIREMENT ; \
 		fi \
 	done
-	touch "${@}"
+	@touch "${@}"
 
 .PHONY: check
 check: deps

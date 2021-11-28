@@ -42,7 +42,7 @@ jobs:
     - name: Write ssh configuration
       run: |
         mkdir -p ~/.ssh/
-        echo ${SSH_KEY} > ~/.ssh/production.key
+        echo "${SSH_KEY}" > ~/.ssh/production.key
         chmod 600 ~/.ssh/production.key
         cat >>~/.ssh/config <<EOF
         Host production
