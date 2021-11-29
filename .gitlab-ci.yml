@@ -47,10 +47,10 @@ build-job:
         sudo /bin/systemctl stop uwsgi.service &&
         cd ${DEPLOY_PATH} &&
         /usr/bin/git fetch &&
-        /usr/bin/git reset --hard origin/master; \
+        /usr/bin/git reset --hard origin/master
         RETURN_CODE=$?
         sudo /bin/systemctl start uwsgi.service
-        exit $RETURN_CODE
+        exit $((${RETURN_CODE#-} + ${?#-}))
       '
 
 deploy-job-production:
