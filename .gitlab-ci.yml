@@ -1,15 +1,16 @@
 image: python:3.9
 
 stages:
-  - setup
   - check
   - build
   - deploy
 
-setup-job:
-  stage: setup
-  script:
-    - make setup
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+cache:
+  paths:
+    - .cache/pip
 
 check-job:
   stage: check
