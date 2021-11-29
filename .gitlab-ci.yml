@@ -51,10 +51,10 @@ deploy-job:
         sudo /bin/systemctl start uwsgi.service
       '
   variables:
+    SSH_KEY: $PROD_SSH_KEY
     SSH_HOST: $PROD_SSH_HOST
     SSH_PORT: $PROD_SSH_PORT
     SSH_USER: $PROD_SSH_USER
-    SSH_KEY: $PROD_SSH_KEY
   environment:
     name: production
     url: https://jost.sh
@@ -62,20 +62,23 @@ deploy-job:
 .notify-job: &notify-job
   stage: notify
   script: |
-    curl -s --form-string "token=${PUSHOVER_TOKEN}" \
-      --form-string "title=${CI_USER} / ${CI_PROJECT}" \
+    curl -s \
       --form-string "user=${PUSHOVER_USER}" \
+      --form-string "token=${PUSHOVER_TOKEN}" \
+      --form-string "sound=${PUSHOVER_SOUND}" \
+      --form-string "priority=${PUSHOVER_PRIORITY}" \
+      --form-string "title=${CI_USER} / ${CI_PROJECT}" \
       --form-string "message=Pipeline run #${CI_ID} triggered by user
     ${CI_USER} ${STATUS} for project \"${CI_PROJECT}\"." \
       https://api.pushover.net/1/messages.json
   variables: &notify-variables
-    PUSHOVER_TOKEN: $PUSHOVER_TOKEN
     PUSHOVER_USER: $PUSHOVER_USER
-    CI_USER: $GITLAB_USER_NAME
-    CI_EMAIL: $GITLAB_USER_EMAIL
-    CI_PROJECT: $CI_PROJECT_TITLE
-    CI_STATUS: $CI_JOB_STATUS
+    PUSHOVER_TOKEN: $PUSHOVER_TOKEN
+    PUSHOVER_SOUND: $PUSHOVER_SOUND
+    PUSHOVER_PRIORITY: $PUSHOVER_PRIORITY
     CI_ID: $CI_PIPELINE_IID
+    CI_USER: $GITLAB_USER_NAME
+    CI_PROJECT: $CI_PROJECT_TITLE
 
 notify-success-job:
   when: on_success
