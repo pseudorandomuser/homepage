@@ -1,4 +1,4 @@
-APP_PATH=./homepage
+FLASK_APP=homepage
 
 PYTHON_VER=python3.9
 IGNORED_ERRORS=E128
@@ -15,8 +15,6 @@ SECRETS_FILENAME=secrets.yaml
 SECRETS_KEYS=SECRET_KEY SECRET_FLAG
 SECRETS_CMD="import secrets; print(secrets.token_hex(${SECRETS_LENGTH}))"
 
-FLASK_APP=homepage
-
 
 .PHONY: deps
 deps: ${VENV_PATH}/.deps
@@ -32,9 +30,9 @@ ${VENV_PATH}/.deps:
 
 .PHONY: check
 check: deps
-	${VENV} ; pylint -Ev ${APP_PATH}
-	${VENV} ; flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${APP_PATH}
-	${VENV} ; mypy --ignore-missing-import ${APP_PATH}
+	${VENV} ; pylint -Ev ${FLASK_APP}
+	${VENV} ; flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${FLASK_APP}
+	${VENV} ; mypy --ignore-missing-import ${FLASK_APP}
 
 .PHONY: build
 build: deps

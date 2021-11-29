@@ -1,6 +1,7 @@
 #!/bin/bash
 
-FLASK_APP=homepage
+export FLASK_ENV=$1
+export FLASK_APP=homepage
 
 make setup
 source .venv/bin/activate
@@ -10,4 +11,4 @@ if [ -z $EXEC_CMD ]; then
     EXEC_CMD=run
 fi
 
-FLASK_ENV=$1 FLASK_APP=$FLASK_APP flask $EXEC_CMD ${@:3}
+flask $EXEC_CMD ${@:3}

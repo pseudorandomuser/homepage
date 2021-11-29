@@ -7,7 +7,7 @@ on:
     branches: [ master ]
 
 env:
-  APP_PATH: ./homepage
+  FLASK_APP: homepage
   IGNORED_ERRORS: E128
 
 jobs:
@@ -27,8 +27,8 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
         if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
     - name: Check with pylint
-      run: pylint -Ev ${APP_PATH}
+      run: pylint -Ev ${FLASK_APP}
     - name: Check with flake8
-      run: flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${APP_PATH}
+      run: flake8 --ignore=${IGNORED_ERRORS} --show-source --statistics ${FLASK_APP}
     - name: Check with mypy
-      run: mypy --ignore-missing-import ${APP_PATH}
+      run: mypy --ignore-missing-import ${FLASK_APP}
