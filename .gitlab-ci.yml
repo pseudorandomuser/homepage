@@ -59,15 +59,16 @@ deploy-job:
     name: production
     url: https://jost.sh
 
-notify-job:
+.notify-job: &notify-job
   stage: notify
   script: |
     curl -s --form-string "token=${PUSHOVER_TOKEN}" \
+      --form-string "title=${CI_USER} / ${CI_PROJECT}" \
       --form-string "user=${PUSHOVER_USER}" \
-      --form-string "message=Pipeline run #${CI_ID} for user ${CI_USER}
-        on project '${CI_PROJECT}' finished with status: ${CI_STATUS}." \
+      --form-string "message=Pipeline run #${CI_ID} ${STATUS} for user
+    ${CI_USER} on project '${CI_PROJECT}'." \
       https://api.pushover.net/1/messages.json
-  variables:
+  variables: &notify-variables
     PUSHOVER_TOKEN: $PUSHOVER_TOKEN
     PUSHOVER_USER: $PUSHOVER_USER
     CI_USER: $GITLAB_USER_NAME
@@ -76,4 +77,16 @@ notify-job:
     CI_STATUS: $CI_JOB_STATUS
     CI_ID: $CI_PIPELINE_IID
 
-  when: always
+notify-success-job:
+  when: on_success
+  <<: *notify-job
+  variables:
+    <<: *notify-variables
+    STATUS: succeeded
+
+notify-failed-job:
+  when: on_failure
+  <<: *notify-job
+  variables:
+    <<: *notify-variables
+    STATUS: FAILED
