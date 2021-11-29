@@ -27,6 +27,26 @@ check-job:
 deploy-job:
     stage: deploy
     script:
-        - echo "Deploying to production..."
-        - sleep 5
-        - echo "Done"
+      mkdir -p ~/.ssh
+      echo "${SSH_KEY}" > ~/.ssh/id_production
+      chmod 600 ~/.ssh/id_production
+      cat >> ~/.ssh/config <<EOF
+        Host production_host
+          Hostname ${SSH_HOST}
+          User ${SSH_USER}
+          Port ${SSH_PORT}
+          IdentityFile ~/.ssh/id_production
+          StrictHostKeyChecking no
+      EOF
+      ssh production_host '
+        sudo /bin/systemctl stop uwsgi.service &&
+        cd ${DEPLOY_PATH} &&
+        /usr/bin/git fetch &&
+        /usr/bin/git reset --hard origin/master; \
+        sudo /bin/systemctl start uwsgi.service
+      '
+    variables:
+      SSH_HOST: $PROD_SSH_HOST
+      SSH_PORT: $PROD_SSH_PORT
+      SSH_USER: $PROD_SSH_USER
+      SSH_KEY: $PROD_SSH_KEY
