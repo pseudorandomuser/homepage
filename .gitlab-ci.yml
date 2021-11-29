@@ -27,29 +27,32 @@ build-job:
       - dist/*.whl
     expire_in: 30 days
 
-deploy-job:
+.deploy-job: &deploy-job
   stage: deploy
   script:
     - mkdir -p ~/.ssh
-    - echo "${SSH_KEY}" > ~/.ssh/id_production
-    - chmod 600 ~/.ssh/id_production
+    - echo "${SSH_KEY}" > ~/.ssh/id_gitlab_runner
+    - chmod 600 ~/.ssh/id_gitlab_runner
     - |
       cat >> ~/.ssh/config <<EOF
-        Host production_host
+        Host deployment_host
           Hostname ${SSH_HOST}
           User ${SSH_USER}
           Port ${SSH_PORT}
-          IdentityFile ~/.ssh/id_production
+          IdentityFile ~/.ssh/id_gitlab_runner
           StrictHostKeyChecking no
       EOF
     - |
-      ssh production_host '
+      ssh deployment_host "
         sudo /bin/systemctl stop uwsgi.service &&
         cd ${DEPLOY_PATH} &&
         /usr/bin/git fetch &&
         /usr/bin/git reset --hard origin/master; \
         sudo /bin/systemctl start uwsgi.service
-      '
+      "
+
+deploy-job-production:
+  <<: *deploy-job
   variables:
     SSH_KEY: $PROD_SSH_KEY
     SSH_HOST: $PROD_SSH_HOST
@@ -57,7 +60,19 @@ deploy-job:
     SSH_USER: $PROD_SSH_USER
   environment:
     name: production
-    url: https://jost.sh
+    url: $PROD_URL
+
+deploy-job-development:
+  <<: *deploy-job
+  when: never
+  variables:
+    SSH_KEY: $DEV_SSH_KEY
+    SSH_HOST: $DEV_SSH_HOST
+    SSH_PORT: $DEV_SSH_PORT
+    SSH_USER: $DEV_SSH_USER
+  environment:
+    name: development
+    url: $DEV_URL
 
 .notify-job: &notify-job
   stage: notify
