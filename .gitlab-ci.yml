@@ -65,8 +65,8 @@ deploy-job:
     curl -s --form-string "token=${PUSHOVER_TOKEN}" \
       --form-string "title=${CI_USER} / ${CI_PROJECT}" \
       --form-string "user=${PUSHOVER_USER}" \
-      --form-string "message=Pipeline run #${CI_ID} ${STATUS} for user
-    ${CI_USER} on project '${CI_PROJECT}'." \
+      --form-string "message=Pipeline run #${CI_ID} triggered by user
+    ${CI_USER} ${STATUS} for project \"${CI_PROJECT}\"." \
       https://api.pushover.net/1/messages.json
   variables: &notify-variables
     PUSHOVER_TOKEN: $PUSHOVER_TOKEN
