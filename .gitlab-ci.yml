@@ -4,6 +4,7 @@ stages:
   - check
   - build
   - deploy
+  - notify
 
 variables:
   PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
@@ -57,3 +58,22 @@ deploy-job:
   environment:
     name: production
     url: https://jost.sh
+
+notify-job:
+  stage: notify
+  script: |
+    curl -s --form-string "token=${PUSHOVER_TOKEN}" \
+      --form-string "user=${PUSHOVER_USER}" \
+      --form-string "message=Pipeline run #${CI_ID} for user ${CI_USER}
+        on project '${CI_PROJECT}' finished with status: ${CI_STATUS}." \
+      https://api.pushover.net/1/messages.json
+  variables:
+    PUSHOVER_TOKEN: $PUSHOVER_TOKEN
+    PUSHOVER_USER: $PUSHOVER_USER
+    CI_USER: $GITLAB_USER_NAME
+    CI_EMAIL: $GITLAB_USER_EMAIL
+    CI_PROJECT: $CI_PROJECT_TITLE
+    CI_STATUS: $CI_JOB_STATUS
+    CI_ID: $CI_PIPELINE_IID
+
+  when: always
