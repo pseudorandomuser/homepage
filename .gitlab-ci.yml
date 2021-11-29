@@ -10,10 +10,6 @@ cache:
     - .venv/
     - instance/
 
-before_script:
-  - python -V
-  - python -m pip install --upgrade pip
-
 setup-job:
     stage: setup
     script:
