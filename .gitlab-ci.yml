@@ -1,0 +1,32 @@
+image: python:3.9
+
+stages:
+  - setup
+  - check
+  - deploy
+
+cache:
+  paths:
+    - .venv/
+    - instance/
+
+before_script:
+  - python -V
+  - python -m pip install --upgrade pip
+
+setup-job:
+    stage: setup
+    script:
+        - make setup
+
+check-job:
+    stage: check
+    script:
+        - make check
+
+deploy-job:
+    stage: deploy
+    script:
+        - echo "Deploying to production..."
+        - sleep 5
+        - echo "Done"
