@@ -62,9 +62,8 @@ deploy-job-production:
     name: production
     url: $PROD_URL
 
-deploy-job-development:
+.deploy-job-development:
   <<: *deploy-job
-  when: never
   variables:
     SSH_KEY: $DEV_SSH_KEY
     SSH_HOST: $DEV_SSH_HOST
