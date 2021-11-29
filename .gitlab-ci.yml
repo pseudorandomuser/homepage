@@ -8,7 +8,6 @@ stages:
 cache:
   paths:
     - .venv/
-    - instance/
 
 setup-job:
     stage: setup
