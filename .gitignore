@@ -18,3 +18,8 @@ __pycache__/
 
 # Sensitive
 secrets.yaml
+
+# Build
+*.egg-info/
+build/
+dist/

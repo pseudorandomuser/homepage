@@ -5,8 +5,8 @@ from typing import Optional
 
 from flask.cli import AppGroup
 
-from app.models.user import User
-from app.auth.users import (
+from homepage.models.user import User
+from homepage.auth.users import (
     create_user,
     delete_user,
     change_password,

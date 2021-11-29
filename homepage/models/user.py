@@ -8,7 +8,7 @@ from mongoengine.fields import (
     DateTimeField
 )
 
-from app.auth.roles import Role
+from homepage.auth.roles import Role
 
 
 class User(Document):

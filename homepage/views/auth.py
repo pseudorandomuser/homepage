@@ -8,8 +8,8 @@ from flask import (
     render_template
 )
 
-from app.models.user import User
-from app.auth.users import AuthenticationError, authenticate_user
+from homepage.models.user import User
+from homepage.auth.users import AuthenticationError, authenticate_user
 
 app = Blueprint('auth', __name__, url_prefix='/auth')
 

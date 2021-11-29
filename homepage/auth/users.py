@@ -6,8 +6,8 @@ from datetime import datetime
 from mongoengine.queryset import QuerySet
 from mongoengine.errors import NotUniqueError, OperationError
 
-from app.auth import crypto
-from app.models.user import User
+from homepage.auth import crypto
+from homepage.models.user import User
 
 logger = logging.getLogger(__name__)
 

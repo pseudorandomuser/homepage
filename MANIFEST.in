@@ -1,5 +1,5 @@
-graft config
-graft app/static
-graft app/templates
+graft instance
+graft homepage/static
+graft homepage/templates
 global-exclude *.py[ocd]
 global-exclude secrets.yaml
