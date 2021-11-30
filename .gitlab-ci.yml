@@ -46,8 +46,7 @@ build-job:
           IdentityFile ~/.ssh/id_gitlab_runner
           StrictHostKeyChecking no
       EOF
-    - apt update && apt install zip
-    - zip -r artifacts.zip Makefile instance/ dist/
+    - python -m zipfile -c artifacts.zip Makefile dist/ instance/
     - sftp deployment:${DEPLOY_PATH} <<< $'put artifacts.zip'
     - ssh deployment '${DEPLOY_EXEC} ${DEPLOY_PATH}/artifacts.zip'
 
