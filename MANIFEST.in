@@ -1,4 +1,3 @@
-graft instance
 graft homepage/static
 graft homepage/templates
 global-exclude *.py[ocd]

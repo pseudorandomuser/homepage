@@ -25,6 +25,8 @@ build-job:
   artifacts:
     paths:
       - dist/*.whl
+      - instance/
+      - Makefile
     expire_in: 30 days
 
 .deploy-job: &deploy-job
