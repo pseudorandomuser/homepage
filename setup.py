@@ -5,6 +5,13 @@ setup(
     name='homepage',
     version='0.0.1',
 
+    description='My personal homepage built on the Flask framework.',
+
+    author='Pit Jost',
+    maintainer='Pit Jost',
+    author_email='jostpit.lu@gmail.com',
+    maintainer_email='jostpit.lu@gmail.com',
+
     zip_safe=False,
     packages=find_packages(),
     include_package_data=True,

@@ -21,5 +21,6 @@ secrets.yaml
 
 # Build
 *.egg-info/
+artifacts/
 build/
 dist/

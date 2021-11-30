@@ -1,14 +1,15 @@
 FLASK_APP=homepage
+PREFIX ?= .
 
 PYTHON_VER=python3.9
 IGNORED_ERRORS=E128
 REQUIREMENTS=requirements.txt requirements-dev.txt
 
-VENV_PATH=./.venv
+VENV_PATH=.venv
 VENV=. ${VENV_PATH}/bin/activate
 
 ENVIRONMENTS=production development
-ENVIRONMENTS_PATH=./instance
+ENVIRONMENTS_PATH=instance
 
 SECRETS_LENGTH=32
 SECRETS_FILENAME=secrets.yaml
@@ -38,6 +39,17 @@ check: deps
 build: deps
 	${VENV} ; ${PYTHON_VER} setup.py bdist_wheel
 
+.PHONY: install
+install: deploy-artifacts secrets
+
+.PHONY: deploy-artifacts
+deploy-artifacts:
+	mkdir -p ${PREFIX}
+	rsync -rlptv ./instance ${PREFIX}
+	${PYTHON_VER} -m venv ${PREFIX}/${VENV_PATH}
+	. ${PREFIX}/${VENV_PATH}/bin/activate ; \
+		pip install --force-reinstall ./dist/*.whl
+
 .PHONY: clean
 clean:
 	rm -rf ./dist
@@ -50,14 +62,18 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rfv {} \;
 
 .PHONY: setup
-setup: deps
+setup: deps secrets
+
+.PHONY: secrets
+secrets:
 	@for ENVIRONMENT in $(ENVIRONMENTS) ; do \
-		SECRETS_FILE=${ENVIRONMENTS_PATH}/$$ENVIRONMENT/${SECRETS_FILENAME} ; \
+		SECRETS_FILE=${PREFIX}/${ENVIRONMENTS_PATH}/$$ENVIRONMENT/${SECRETS_FILENAME} ; \
 		if [ ! -f $$SECRETS_FILE ]; then \
 			echo "Generating secrets: $$SECRETS_FILE" ; \
 			for SECRET_KEY in $(SECRETS_KEYS) ; do \
 				printf "$$SECRET_KEY: " >> $$SECRETS_FILE ; \
-				${VENV} ; ${PYTHON_VER} -c ${SECRETS_CMD} >> $$SECRETS_FILE ; \
+				. ${PREFIX}/${VENV_PATH}/bin/activate ; \
+					${PYTHON_VER} -c ${SECRETS_CMD} >> $$SECRETS_FILE ; \
 			done \
 		fi \
 	done
