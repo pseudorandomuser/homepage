@@ -76,6 +76,7 @@ deploy-job-production:
     url: $DEV_URL
 
 .notify-job: &notify-job
+  dependencies: []
   stage: notify
   script: |
     curl -s \
